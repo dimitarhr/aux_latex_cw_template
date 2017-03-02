@@ -165,13 +165,15 @@ print a newline\;
 	\subsection{Multiple lights}
 	There are three types of lighting sources implemented in the project: directional, spot and point lights. The directional light is used to light the whole scene.
 	\subsection{Texturing and Normal Mapping}
-	Texturing and Normal Mapping
+	Texturing is the process by which image data can be applied to geometry objects and models to provide mode details. Texturing a piece of geometry requires texture coordinates, which is a 2D vector. The texture function, that is used in the fragment shader, takes the texture image and the texture coordinates as arguments and returns a 4D vector that represent the colour for the current pixel.
+    \begin{center}{ \(vec4 texColour = texture(tex, texCoord) 	(1) \)}\end{center}
+    Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It gives the illusion that a flat mesh has depth on its surface by reacting with the light in the scene.
 	\subsection{Shadows}
-	Shadows
+	Shadow mapping uses the depth buffer that captures depth information to allow us determine if an object is in shadow based on the light hitting the mesh. In this project the shadows are created with one spot light which is casting light on meshes which are rendered separately from the others. In order to create more realistic shadows, the projection matrix that is used with a wider field of view. The normal angle for the FOV is 45 and for the shadows it is changed to 90. Figure demonstrates the shadow casting in the project. 
 	\subsection{Moving objects}
-	Moving objects
+	For the implementation of the moving objects the sin fuction was used. By using its main property (Figure) a the position of a mesh can be changed in a particular range. The sin function is used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.
 	\subsection{Hierarchical Transformations}
-	Hierarchical Transformations
+	Hierarchical Transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh to another, all with just one multiply.
 	\subsection{Skybox}
 	Skybox
 		

@@ -70,19 +70,38 @@
 \begin{document}
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time using OpenGL and the skills developed in the Computer Graphics module at Edinburgh Napier University. The project is inspired by the series Games of Thrones and previous years projects found on the games society website at Edinburgh Napier University. The scene is meant to be visually intriguing and more importantly it is meant to demonstrate core understandings of Computer Graphics principles. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones} and previous years projects found on the games website of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy.
 	\end{abstract}
     
 	\textbf{Keywords -- }{\mykeywords}
     %START FROM HERE
 	\section{Introduction}
-    \paragraph{Project Aims}
+    \paragraph{Scene parts} The project is meant to be visually intriguing and more importantly it is meant to demonstrate core understandings of Computer Graphics principles. The 3D scene involves:   
+    \begin{itemize}
+    	\item a miniature model of the Earth and the Moon, rotating around it;
+    	\item a wall and a spot light demonstrating shadows;
+    	\item a realistic dragon egg made with normal mapping;
+    	\item a model of a dragon next to the Earth, protecting its egg;
+    	\item geometry objects moved with hierarchical transformations (the dragon egg protectors);
+    	\item skybox that brings to the scene background and completeness;
+    \end{itemize}
+	\paragraph{Graphics effects}The graphics effects implemented in this project include:
+	\begin{itemize}
+		\item multiple light types (directional, spot and point light);
+		\item texturing and normal mapping that give high level of details;
+		\item shadows that make the scene more realistic;
+	\end{itemize}
+    There are two types of cameras implemented within the project: \textit{free and target camera}. The free camera allows the user to go around and explore the 3D scene and the four target cameras show the scene from four static points of view.
     
-    You should cite References like this: \cite{Keshav}. The references are saved in an external .bib file, and will automatically be added ot the bibliography at the end once cited.
+    The exact implementations of these graphics techniques are discussed later in the report.
+    \\\\You should cite References like this: \cite{Keshav}. The references are saved in an external .bib file, and will automatically be added ot the bibliography at the end once cited.
     
     \figuremacro{h}{placeholder}{ImageTitle}{ - Some Descriptive Text}{1.0}
 	
-	\section{Formatting}
+	\section{Related Work}
+	
+	All of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University. The required skills were developed during the practical sessions of the module. Some of graphics techniques had to be taken further in order to develop the final 3D scene for this project.
+	
 	Some common formatting you may need uses these commands for \textbf{Bold Text}, \textit{Italics}, and \underline{underlined}.
 	\subsection{LineBreaks}
 	Here is a line
@@ -139,8 +158,24 @@ print a newline\;
 }
 \caption{FizzBuzz}
 \end{algorithm}
-	
-\section{Conclusion}	
+	\section{Implementation}
+		
+	There are a number of elements that are used together in order to make the scene alluring. These elements are:
+
+	\subsection{Multiple lights}
+	There are three types of lighting sources implemented in the project: directional, spot and point lights. The directional light is used to light the whole scene.
+	\subsection{Texturing and Normal Mapping}
+	Texturing and Normal Mapping
+	\subsection{Shadows}
+	Shadows
+	\subsection{Moving objects}
+	Moving objects
+	\subsection{Hierarchical Transformations}
+	Hierarchical Transformations
+	\subsection{Skybox}
+	Skybox
+		
+	\section{Conclusion}	
 \bibliographystyle{ieeetr}
 \bibliography{references}
 		

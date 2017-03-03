@@ -68,13 +68,18 @@
 \hypersetup{pdfauthor=\myauthor,pdftitle=\mytitle,pdfkeywords=\mykeywords}
 \sloppy
 \begin{document}	
+	
+	\hyphenchar\font = -1
+	
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} and previous years projects found on the games website of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy. This report covers how te scene was implemented and what future work is considered.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy. This report covers how te scene was implemented and what future work is considered.
 	\end{abstract}
-	\\
+	\\\\
 	\textbf{Keywords -- }{\mykeywords}
+	\figuremacro{h}{inspiration}{Scenes used as inspiration}{ }{1.0}	
     %START FROM HERE
+    
 	\section{Introduction}
     \paragraph{Scene parts} The project is meant to be visually intriguing and more importantly it is meant to demonstrate core understandings of Computer Graphics principles. The 3D scene involves:   
     \begin{itemize}
@@ -95,38 +100,55 @@
 	\end{itemize}
     There are two types of cameras implemented within the project: \textit{free and target camera}. The free camera allows the user to go around and explore the 3D scene and the four target cameras show the scene from four static points of view.
     
-    The exact implementations of these graphics techniques are discussed later in the report.
+    Further information about these graphics techniques is given later in the report.
+	\figuremacro{h}{general}{Scene from the project}{ }{1.0}
 	
 	\section{Related Work}
-	
+
 	All of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. The required skills were developed during the practical sessions of the module. Some of graphics techniques had to be taken further in order to develop the final 3D scene for this project.
-	
+
 	\section{Implementation}
 		
 	There are a number of elements that are used together in order to make the scene alluring. These elements are:
 
 	\subsection{Multiple lights}
-	There are three types of lighting sources implemented in the project: directional, spot and point lights. They are essential to make the normal maps and shadows working. The directional light is used to light the whole scene. There is one point light between the earth and the egg protectors that illuminates the objects around it when the directional light is turned off. Two of the spot lights are located in front of the earth and boxes. Together with the normal maps they give the meshes a better realistic aesthetic. There is a spot light inside the torch that casts shadows from the objects on the wall and on the ground. The Phong shading was used throughout the project. The Phong shading is that is calculated on a per-pixel rather than per-vertex level. Figure shows the difference between the Gouraud (per-vertex) and the Phong (per-pixel) shading.
-	\figuremacro{h}{phongAndGouraud}{Sin and Cos functions}{ }{1.0}	
+	There are three types of lighting sources implemented in the project: directional, spot and point lights. They are essential to make the normal maps and shadows working. The directional light is used to illuminate the whole scene. There is one point light between the earth and the egg protectors that enlighten the objects around it when the directional light is turned off. Two of the spot lights are located in front of the earth and boxes. Together with the normal maps they give the meshes a good realistic view. In addition to this, there is a spot light inside the torch that casts shadows by the objects on the wall and on the ground. 
+	\\The Phong shading was used throughout the project. The Phong shading is a graphics technique that calculates light on a per-pixel rather than per-vertex level. It improves upon Gouraud shading and provides a better approximation of the shading of a smooth surface. On \textbf{Figure {\ref{fig:phongAndGouraud}}} is shown the difference between the Gouraud - per-vertex (left) and the Phong - per-pixel (right) shading.
+	\figuremacro{h}{phongAndGouraud}{Gouraud and Phong shading}{ }{1.0}	
+	\\
+	\textbf{Figure {\ref{fig:phongEquation}}} represents the Phong equation where the light is white, the ambient and diffuse colours are both blue and the specular colour is white. The same properties are applied to the meshes in the project and used in the fragment shader when calculating the correct colours to be displayed.
+	\figuremacro{h}{phongEquation}{Phong shading equation}{ }{1.0}		
+	
 	\subsection{Texturing and Normal Mapping}
 	Texturing is the process by which image data can be applied to geometry objects and models to provide more details. 
-    Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It gives the illusion that a flat mesh has depth on its surface by reacting with the light in the scene. In the project there is normal maps applied to the Earth and the dragon eggs. 
-   	\figuremacro{h}{normalMaps}{Sin and Cos functions}{ }{1.0}	
+    \\Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It gives the illusion that a flat mesh has depth on its surface by reacting with the light in the scene. In the project there is normal maps applied to the Earth and the dragon eggs. See \textbf{Figure {\ref{fig:normalMaps}}} for references.
+   	\figuremacro{h}{normalMaps}{Normal maps in the project}{ }{1.0}	
+   	
+   	This effect can be achieved with normal map images similar to the one on \textbf{Figure {\ref{fig:bublenormalmap}}}. The RGB values of the texture represents the <x,y,z> components of the normal at this point. In addition to the normal, the bi-normal and the tangent are also required for the transformation matrix that is used to calculate the sampled normal. This normal map is used for the effect achieved on the two dragon eggs on \textbf{Figure {\ref{fig:normalMaps}}}.
+	\figuremacro{h}{bublenormalmap}{Normal map}{ }{0.8}	
+	   	
 	\subsection{Shadows}
-	Shadow mapping uses the depth buffer that captures depth information to allow us determine if an object is in shadow based on the light hitting the mesh. In this project the shadows are created with one spot light which is casting light on meshes in front of the wall. In order to create more realistic shadows, the projection matrix that is used is with a wider field of view. The normal angle for the FOV is $\pi/2$ and for the shadows it is changed to $\pi$. Figure demonstrates the shadow casting in the project.  The reason for this is
-	\figuremacro{h}{shadowStick}{Sin and Cos functions}{ }{1.0}
-	\subsection{Moving objects}
-	For the implementation of the moving objects the sin and cos functions were used. By using their main property (Figure 1) the position of the meshes are changed in a particular range. The sin and cos function is used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.	
-	\figuremacro{h}{sincos}{Sin and Cos functions}{ }{1.0}
-	\subsection{Hierarchical Transformations}
-	Hierarchical transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh to another, all with just one multiplication. In this project the egg protectors are an example of a hierarchical transformations. In order to achieve the final effect the model matrix (1) of the outer most torus is used to calculate the model matrix of the inner toruses.\\\\
-	$[ModelMatrix]~=~[Translation]~*~[Rotation]~*~[Scale]$~(1)
-	\subsection{Skybox}
-	The skybox is a great graphics effect that brings completeness and background to the 3D scene. The effect is achieved with a cube that has a texture applied to its inner sides and the internal parts of the cube are rendered rather than the external parts by disabling the cull face.
+	Shadow mapping uses the depth buffer that captures depth information. This allows us to determine if an object is in shadow based on the light hitting the mesh. \textbf{Figure {\ref{fig:shadowExpl}}} shows an example of how the depth buffer is working to calculate which mesh is lit and which one is in shadow. 
+	\figuremacro{h}{shadowExpl}{Depth buffer}{ }{1.0}	
+	\\In this project the shadows are created with one spot light which is casting light on meshes in front of the wall. In order to create more realistic shadows, the projection matrix that is used is with a wider field of view. The normal angle for the FoV is $\pi/4$ and for the shadows it is changed to $\pi/2$. The reason for this is because the camera has a narrower FoV than the cone of the spot light and this may result in clipping. \textbf{Figure {\ref{fig:shadowStick}}} demonstrates the shadow casting in the project. 
+	\figuremacro{h}{shadowStick}{Shadow}{ }{0.9}
+
 	
+	\subsection{Moving objects}
+	For the implementation of the moving objects the $\sin$ and $\cos$ functions were used. By using their main property (shown on \textbf{Figure {\ref{fig:sincos}}}) the position of the meshes are changed in a particular range. The $\sin$ and $\cos$ functions are used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.	
+	\figuremacro{h}{sincos}{$\sin$ and $\cos$ functions}{ }{0.9}
+	\subsection{Hierarchical Transformations}
+	Hierarchical transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh by another, all with just one multiplication. In this project the egg protectors are an example of a hierarchical transformations. In order to achieve the final effect the model matrix of the current torus is calculated from the model matrices of the bigger toruses. \textbf{Figure {\ref{fig:hierarchicalTransformations}}} shows the result of this graphics effect in the project.
+	\\\\
+	$[ModelMatrix]~=~[Translation]~*~[Rotation]~*~[Scale]$~
+	\figuremacro{h}{hierarchicalTransformations}{Shadow}{ }{0.8}
+	\subsection{Skybox}
+	The skybox is a great graphics effect that brings completeness and background to the 3D scene. The effect is achieved with a cube that has a texture applied to its inner sides and the internal parts of the cube are rendered rather than the external parts by disabling the cull face. Cube map similar to the one on \textbf{Figure {\ref{fig:skybox}}} can be used for the inner parts of the cube.
+	\figuremacro{h}{skybox}{Cube map used in the project}{ }{0.9}	
 	\section{Future Work}
-	The initial plan for the 3D scene was to have terrain as well, however, because of the lack of time it was not possible to make it. This is something which is definitely considered  for future development. In addition to this there will be post-processing effects such as: .
-	\section{Conclusion}	
+	The initial plan for the 3D scene was to have terrain as well, however, because of the lack of time it was not possible to create it. This is something which is definitely considered  for future development. In addition to this, there will be post-processing effects such as: Blurring, Motion Blur, Masking, Greyscale and fully reflective objects. 
+	\section{Conclusion}
+	At this stage the scene was successfully finished with all the required techniques and effects. By undertaking the future work, the scene will became even more interesting and visually appealing.	
 \bibliographystyle{ieeetr}
 \bibliography{references}
 		

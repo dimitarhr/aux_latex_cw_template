@@ -67,12 +67,12 @@
 \date{}
 \hypersetup{pdfauthor=\myauthor,pdftitle=\mytitle,pdfkeywords=\mykeywords}
 \sloppy
-\begin{document}
+\begin{document}	
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones} and previous years projects found on the games website of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} and previous years projects found on the games website of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy. This report covers how te scene was implemented and what future work is considered.
 	\end{abstract}
-    
+	\\
 	\textbf{Keywords -- }{\mykeywords}
     %START FROM HERE
 	\section{Introduction}
@@ -85,6 +85,8 @@
     	\item geometry objects moved with hierarchical transformations (the dragon egg protectors);
     	\item skybox that brings to the scene background and completeness;
     \end{itemize}
+    
+    
 	\paragraph{Graphics effects}The graphics effects implemented in this project include:
 	\begin{itemize}
 		\item multiple light types (directional, spot and point light);
@@ -94,89 +96,36 @@
     There are two types of cameras implemented within the project: \textit{free and target camera}. The free camera allows the user to go around and explore the 3D scene and the four target cameras show the scene from four static points of view.
     
     The exact implementations of these graphics techniques are discussed later in the report.
-    \\\\You should cite References like this: \cite{Keshav}. The references are saved in an external .bib file, and will automatically be added ot the bibliography at the end once cited.
-    
-    \figuremacro{h}{placeholder}{ImageTitle}{ - Some Descriptive Text}{1.0}
 	
 	\section{Related Work}
 	
-	All of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University. The required skills were developed during the practical sessions of the module. Some of graphics techniques had to be taken further in order to develop the final 3D scene for this project.
+	All of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. The required skills were developed during the practical sessions of the module. Some of graphics techniques had to be taken further in order to develop the final 3D scene for this project.
 	
-	Some common formatting you may need uses these commands for \textbf{Bold Text}, \textit{Italics}, and \underline{underlined}.
-	\subsection{LineBreaks}
-	Here is a line
-    
-    Here is a line followed by a double line break.
-	This line is only one line break down from the above, Notice that latex can ignore this
-    
-    We can force a break \\ with the break operator.
-    
-	\subsection{Maths}
-    Embedding Maths is Latex's bread and butter    
-    
-    {\centering \Large \(
-        J = \begin{bmatrix}
-            \frac{\delta e}{\delta \theta _0}
-            \frac{\delta e}{\delta \theta _1}
-            \frac{\delta e}{\delta \theta _2}
-        \end{bmatrix}
-        = e_{current} - e_{target} 
-    \)\par}
-	
-	\subsection{Code Listing}
-    You can load segments of code from a file, or embed them directly.
-    
-\begin{lstlisting}[caption = Hello World! in c++]
-#include <iostream>
-
-int main() {
-    std::cout << "Hello World!" << std::endl;
-    std::cin.get();
-    return 0;
-}
-\end{lstlisting}
-
-\lstinputlisting[caption = Hello World! in python script]{./sourceCode/hello.py}
-    
-\subsection{PseudoCode}
-
-\begin{algorithm}[h]
-\For{$i = 0$ \KwTo $100$}{
- print\_number = true\;
-\If{i is divisible by 3}{
- print "Fizz"\;
- print\_number = false\;
-}
-\If{i is divisible by 5}{
- print "Buzz"\;
- print\_number = false\;
-}
-\If{print\_number}{
-    print i\;
-}
-print a newline\;
-}
-\caption{FizzBuzz}
-\end{algorithm}
 	\section{Implementation}
 		
 	There are a number of elements that are used together in order to make the scene alluring. These elements are:
 
 	\subsection{Multiple lights}
-	There are three types of lighting sources implemented in the project: directional, spot and point lights. The directional light is used to light the whole scene.
+	There are three types of lighting sources implemented in the project: directional, spot and point lights. They are essential to make the normal maps and shadows working. The directional light is used to light the whole scene. There is one point light between the earth and the egg protectors that illuminates the objects around it when the directional light is turned off. Two of the spot lights are located in front of the earth and boxes. Together with the normal maps they give the meshes a better realistic aesthetic. There is a spot light inside the torch that casts shadows from the objects on the wall and on the ground. The Phong shading was used throughout the project. The Phong shading is that is calculated on a per-pixel rather than per-vertex level. Figure shows the difference between the Gouraud (per-vertex) and the Phong (per-pixel) shading.
+	\figuremacro{h}{phongAndGouraud}{Sin and Cos functions}{ }{1.0}	
 	\subsection{Texturing and Normal Mapping}
-	Texturing is the process by which image data can be applied to geometry objects and models to provide mode details. Texturing a piece of geometry requires texture coordinates, which is a 2D vector. The texture function, that is used in the fragment shader, takes the texture image and the texture coordinates as arguments and returns a 4D vector that represent the colour for the current pixel.
-    \begin{center}{ \(vec4 texColour = texture(tex, texCoord) 	(1) \)}\end{center}
-    Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It gives the illusion that a flat mesh has depth on its surface by reacting with the light in the scene.
+	Texturing is the process by which image data can be applied to geometry objects and models to provide more details. 
+    Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It gives the illusion that a flat mesh has depth on its surface by reacting with the light in the scene. In the project there is normal maps applied to the Earth and the dragon eggs. 
+   	\figuremacro{h}{normalMaps}{Sin and Cos functions}{ }{1.0}	
 	\subsection{Shadows}
-	Shadow mapping uses the depth buffer that captures depth information to allow us determine if an object is in shadow based on the light hitting the mesh. In this project the shadows are created with one spot light which is casting light on meshes which are rendered separately from the others. In order to create more realistic shadows, the projection matrix that is used with a wider field of view. The normal angle for the FOV is 45 and for the shadows it is changed to 90. Figure demonstrates the shadow casting in the project. 
+	Shadow mapping uses the depth buffer that captures depth information to allow us determine if an object is in shadow based on the light hitting the mesh. In this project the shadows are created with one spot light which is casting light on meshes in front of the wall. In order to create more realistic shadows, the projection matrix that is used is with a wider field of view. The normal angle for the FOV is $\pi/2$ and for the shadows it is changed to $\pi$. Figure demonstrates the shadow casting in the project.  The reason for this is
+	\figuremacro{h}{shadowStick}{Sin and Cos functions}{ }{1.0}
 	\subsection{Moving objects}
-	For the implementation of the moving objects the sin fuction was used. By using its main property (Figure) a the position of a mesh can be changed in a particular range. The sin function is used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.
+	For the implementation of the moving objects the sin and cos functions were used. By using their main property (Figure 1) the position of the meshes are changed in a particular range. The sin and cos function is used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.	
+	\figuremacro{h}{sincos}{Sin and Cos functions}{ }{1.0}
 	\subsection{Hierarchical Transformations}
-	Hierarchical Transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh to another, all with just one multiply.
+	Hierarchical transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh to another, all with just one multiplication. In this project the egg protectors are an example of a hierarchical transformations. In order to achieve the final effect the model matrix (1) of the outer most torus is used to calculate the model matrix of the inner toruses.\\\\
+	$[ModelMatrix]~=~[Translation]~*~[Rotation]~*~[Scale]$~(1)
 	\subsection{Skybox}
-	Skybox
-		
+	The skybox is a great graphics effect that brings completeness and background to the 3D scene. The effect is achieved with a cube that has a texture applied to its inner sides and the internal parts of the cube are rendered rather than the external parts by disabling the cull face.
+	
+	\section{Future Work}
+	The initial plan for the 3D scene was to have terrain as well, however, because of the lack of time it was not possible to make it. This is something which is definitely considered  for future development. In addition to this there will be post-processing effects such as: .
 	\section{Conclusion}	
 \bibliographystyle{ieeetr}
 \bibliography{references}

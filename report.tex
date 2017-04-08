@@ -74,7 +74,7 @@
 	
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from multiple lights and light types to shadowing, material shading and transform hierarchy. This report covers how the scene was implemented and what future work is considered.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from post-processing effects to shadowing, material shading, reflective and transparent water. This report covers how the scene was implemented and what future work is considered.
 	\end{abstract}
 	\\\\
 	\textbf{Keywords -- }{\mykeywords}
@@ -89,7 +89,9 @@
     	\item a realistic dragon egg made with normal mapping;
     	\item a model of a dragon next to the Earth, protecting its egg;
     	\item geometry objects moved with hierarchical transformations (the dragon egg and its' protectors);
-    	\item skybox that brings completeness to the scene and also background;
+    	\item a skybox that brings completeness to the scene and also background;
+    	\item island terrain;
+    	\item instancing of 800 dragon eggs around the island;
     \end{itemize}
     
     
@@ -98,15 +100,17 @@
 		\item multiple light types (directional, spot and point lights);
 		\item texturing and normal mapping that give high level of details;
 		\item shadows that make the scene more realistic;
+		\item reflective and refractive water with implemented Fresnel effect, depth and distortion;
+    	\item post-processing effects, including mask, edge detection, sepia, motion blur and wire framing;
 	\end{itemize}
     There are two types of cameras implemented within the project: \textit{free and target camera}. The free camera allows the user to go around and explore the 3D scene and the four target cameras show the scene from four static points of view.
     
-    Further information about these graphics techniques is given later in the report. \textbf{Figure {\ref{fig:general}}} shows all these elements and graphics effects.
+    Further information about these graphics techniques is given later in the report. \textbf{Figure {\ref{fig:general}}} shows part of these elements and graphics effects.
 	\figuremacro{h}{general}{Scene from the project}{ }{1.0}
 	
 	\section{Related Work}
 
-	All of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. The required skills were developed during the practical sessions of the module. Some of the graphics techniques had to be taken further in order to develop the final 3D scene for this project.
+	Part of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. The required skills were developed during the practical sessions of the module. In addition to this, for the water effect an online tutorial\cite{onlineTutorial} was followed and adapted for the purposes of this project. Some of the graphics techniques had to be taken further in order to develop the final 3D scene for this project.
 
 	\section{Implementation}
 		
@@ -146,6 +150,15 @@
 	\subsection{Skybox}
 	The skybox is a great graphics effect that brings completeness and background to the 3D scene. The effect is achieved with a cube that has a texture applied to its inner sides and the internal parts of the cube are rendered rather than the external parts by disabling the cull face. Cube map similar to the one on \textbf{Figure {\ref{fig:skybox}}} can be used for the inner parts of the cube.
 	\figuremacro{h}{skybox}{Cube map used in the project}{ }{0.9}	
+	\subsection{Terrain}
+	The terrain is a geometry object that makes the scene even more realistic. It is generated using a height map. \textbf{Figure {\ref{fig:heightmap}}} shows an example of a height map. A height map is a texture that contains height data where the pixel colour represents the y-component of the vertex position. The height map from \textbf{Figure{\ref{fig:heightmap}}} is used in this project. The dark and white pixels represent the low and high parts of the scene, respectively. 
+	\figuremacro{h}{heightmap}{Height map}{ }{1.0}
+	A crucial part of the terrain is multi-texturing and generating texture weights. These two features make the terrain more realistic and natural. The texture weights are generated based on the height of the terrain and later used if the shaders to blend between the textures. \textbf{Figure {\ref{fig:multiTexturing}}} shows an example of multi-texturing terrain from the project.
+	\figuremacro{h}{multiTexturing}{Multi-texturing terrain. Sand-Grass-Rocks}{ }{1.0}
+	\subsection{Water}
+	\subsection{Post-processing effects}
+	\section{Optimization}
+	\figuremacro{h}{instancing}{800 Dragon Eggs rendered with Instancing}{ }{1.0}
 	\section{Future Work}
 	The initial plan for the 3D scene was to have terrain as well, however, because of the lack of time it was not possible to create it. This is something which is definitely considered  for future development. In addition to this, there will be post-processing effects such as: Blurring, Motion Blur, Masking, Greyscale and fully reflective objects. 
 	\section{Conclusion}

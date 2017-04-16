@@ -1,6 +1,6 @@
 %FILL THESE IN
 \def\mytitle{Computer Graphics \\ Coursework Part 1 - Report}
-\def\mykeywords{3D scene, OpenGL, C++, GLSL, lighting, shadows, normal mapping, real time, phong}
+\def\mykeywords{3D scene, OpenGL, GLSL, shadows, normal mapping, refraction, reflection, Fresnel effect, distortion, instancing, terrain}
 \def\myauthor{Dimitar Hristov}
 \def\contact{40201757@live.napier.ac.uk}
 \def\mymodule{Computer Graphics (SET08116)}
@@ -74,7 +74,7 @@
 	
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from post-processing effects to shadowing, material shading, reflective and transparent water. This report covers how the scene was implemented and what future work is considered.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from material shading and post-processing effects to reflective and refractive rippling water. This report covers how the scene was implemented and what future work is considered.
 	\end{abstract}
 	\\\\
 	\textbf{Keywords -- }{\mykeywords}
@@ -82,26 +82,25 @@
     %START FROM HERE
     
 	\section{Introduction}
-    \paragraph{Scene parts} The project is meant to be visually intriguing and more importantly it is meant to demonstrate core understandings of Computer Graphics principles. The 3D scene involves:   
+    \paragraph{Scene parts} The project is meant to be visually intriguing and to demonstrate core understandings of Computer Graphics principles. The 3D scene consists of:   
     \begin{itemize}
+    	\item realistic water;
+    	\item instancing of 800 dragon eggs made with normal mapping around the island;
+    	\item island terrain surrounded by the water;   
     	\item a miniature model of the Earth and the Moon, rotating around it;
     	\item a wall and a spot light demonstrating shadows;
-    	\item a realistic dragon egg made with normal mapping;
     	\item a model of a dragon next to the Earth, protecting its egg;
-    	\item geometry objects moved with hierarchical transformations (the dragon egg and its' protectors);
-    	\item a skybox that brings completeness to the scene and also background;
-    	\item island terrain;
-    	\item instancing of 800 dragon eggs around the island;
+    	\item geometry objects moving with hierarchical transformations (one of the dragon eggs and its' protectors);
+    	\item a skybox that brings completeness to the scene and also background;	
     \end{itemize}
-    
     
 	\paragraph{Graphics effects}The graphics effects implemented in this project include:
 	\begin{itemize}
+		\item reflective and refractive water with implemented Fresnel effect, depth and distortion;
+		\item post-processing effects, including mask, edge detection, sepia, motion blur and wire framing;
 		\item multiple light types (directional, spot and point lights);
 		\item texturing and normal mapping that give high level of details;
 		\item shadows that make the scene more realistic;
-		\item reflective and refractive water with implemented Fresnel effect, depth and distortion;
-    	\item post-processing effects, including mask, edge detection, sepia, motion blur and wire framing;
 	\end{itemize}
     There are two types of cameras implemented within the project: \textit{free and target camera}. The free camera allows the user to go around and explore the 3D scene and the four target cameras show the scene from four static points of view.
     
@@ -109,38 +108,36 @@
 	\figuremacro{h}{general}{Scene from the project}{ }{1.0}
 	
 	\section{Related Work}
-
-	Part of the techniques used in this project can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. The required skills were developed during the practical sessions of the module. In addition to this, for the water effect an online tutorial\cite{onlineTutorial} was followed and adapted for the purposes of this project. Some of the graphics techniques had to be taken further in order to develop the final 3D scene for this project.
+	Part of the techniques used in the scene can be found in the workbook for the Computer Graphics module - SET08116 at Edinburgh Napier University\cite{book}. In addition to this, for the water effect an online tutorial\cite{onlineTutorial} was followed and adapted for the purposes of this project. Some of the graphics techniques had to be taken further in order to develop the final 3D scene in an optimized way.
 
 	\section{Implementation}
-		
-	There are a number of elements that are used together in order to make the scene alluring. These elements are:
+	In order to make the scene alluring, a wide variety of geometry objects were used. These elements are:
 
 	\subsection{Multiple lights}
-	There are three types of lighting sources implemented in the project: directional, spot and point lights. They are essential to make the normal maps and shadows working. The directional light is used to illuminate the whole scene. There is one point light between the earth and the egg protectors that enlighten the objects around it when the directional light is turned off. Two of the spot lights are located in front of the earth and the boxes. Together with the normal maps they give the meshes a good realistic view. In addition to this, there is a spot light inside the torch that casts shadows of the objects on the wall and on the ground. 
-	\\The Phong shading was used throughout the project. The Phong shading is a graphics technique that calculates light on a per-pixel rather than per-vertex level. It improves upon Gouraud shading and provides a better approximation of the shading of a smooth surface. On \textbf{Figure {\ref{fig:phongAndGouraud}}} is shown the difference between the Gouraud - per-vertex (left) and the Phong - per-pixel (right) shading.
-	\figuremacro{h}{phongAndGouraud}{Gouraud and Phong shading}{ }{1.0}	
-	\\
-	\textbf{Figure {\ref{fig:phongEquation}}} represents the Phong equation where the light is white, the ambient and diffuse colours are both blue and the specular colour is white. The same properties are applied to the meshes in the project and used in the fragment shader when calculating the correct colours to be displayed.
+	There are three types of lighting sources implemented in the project: directional, spot and point lights. Together with the normal maps they give to the geometry objects good realistic views. 
+	\\The Phong shading was used throughout the project. It is a graphics technique that calculates light on a per-pixel rather than per-vertex level. It improves upon Gouraud shading and provides a better approximation of the shading of a smooth surface. On \textbf{Figure {\ref{fig:phongAndGouraud}}} is shown the difference between the Gouraud - per-vertex (left) and the Phong - per-pixel (right) shading.
+	\figuremacro{h}{phongAndGouraud}{Gouraud and Phong shading}{ }{0.9}	
+	\\\textbf{Figure {\ref{fig:phongEquation}}} shows the Phong equation where the light is white, the ambient and diffuse colours are both blue and the specular colour is white. The same properties are applied to the meshes in the scene and used in the fragment shader when calculating the correct colours to be displayed.
 	\figuremacro{h}{phongEquation}{Phong shading equation}{ }{1.0}		
 	
 	\subsection{Texturing and Normal Mapping}
 	Texturing is the process by which image data can be applied to geometry objects and models to provide more details. 
-    \\Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It creates the illusion that a flat mesh has depth on its surface by reacting with the light in the scene. In the project there are normal maps applied to the Earth and the dragon eggs. See \textbf{Figure {\ref{fig:normalMaps}}} for references.
-   	\figuremacro{h}{normalMaps}{Normal maps in the project}{ }{1.0}	
+    \\Normal mapping is a technique that allows us to calculate the normals on a per-pixel level and gives a high level of detail to the objects. It creates the illusion that a flat mesh has depth on its surface by reacting with the light in the scene. In the project there are normal maps applied to the Earth, the dragon eggs and to the water. See \textbf{Figure {\ref{fig:normalMaps}}} for references.
+   	\figuremacro{h}{normalMaps}{Normal maps in the scene}{ }{1.0}	
    	
    	This effect can be achieved with normal map images similar to the one on \textbf{Figure {\ref{fig:bublenormalmap}}}. The RGB values of the texture represents the <x,y,z> components of the normal at this point. In addition to the normal, the bi-normal and the tangent are also required for the transformation matrix that is used to calculate the sampled normal. This normal map is used for the effect achieved on the two dragon eggs on \textbf{Figure {\ref{fig:normalMaps}}}.
-	\figuremacro{h}{bublenormalmap}{Normal map}{ }{0.8}	
+	\figuremacro{h}{bublenormalmap}{Normal map}{ }{0.52}	
 	   	
 	\subsection{Shadows}
 	Shadow mapping uses the depth buffer that captures depth information. This allows us to determine if an object is in shadow based on the light hitting the mesh. \textbf{Figure {\ref{fig:shadowExpl}}} shows an example of how the depth buffer is working to calculate which mesh is lit and which one is in shadow. 
 	\figuremacro{h}{shadowExpl}{Depth buffer}{ }{1.0}	
-	\\In this project the shadows are created with one spot light which is casting light on meshes in front of the wall. In order to create more realistic shadows, the projection matrix that is used is with a wider field of view. The normal angle for the FoV is $\pi/4$ and for the shadows it is changed to $\pi/2$. The reason for this is because the camera has a narrower FoV than the cone of the spot light and this may result in clipping. \textbf{Figure {\ref{fig:shadowStick}}} demonstrates the shadow casting in the project. 
+	\\In the scene the shadows are created with one spot light which is casting light on meshes in front of the wall. In order to create more realistic shadows, the projection matrix that is used is with a wider field of view. The normal angle for the FoV is $\pi/4$ and for the shadows it is changed to $\pi/2$. The reason for this is because the camera has a narrower FoV than the cone of the spot light and this may result in clipping. \textbf{Figure {\ref{fig:shadowStick}}} demonstrates the shadow casting in the project. 
 	\figuremacro{h}{shadowStick}{Shadow}{ }{0.9}
-
+	
+	Apart from creating shadows the depth buffer is also used to determine the depth of the water. By using this we can make the water more transparent in the shallow areas and more murky in the deep areas. More on this can be found in the water section.
 	
 	\subsection{Moving objects}
-	For the implementation of the moving objects the $\sin$ and $\cos$ functions were used. By using their main property (shown on \textbf{Figure {\ref{fig:sincos}}}) the position of the meshes are changed in a particular range. The $\sin$ and $\cos$ functions are used for the movement of the moon around the Earth, the torch in front of the wall and the levitating egg and protectors.	
+	For the implementation of the moving objects the $\sin$ and $\cos$ functions were used. By using their main property (shown on \textbf{Figure {\ref{fig:sincos}}}) the position of the meshes are changed in a predefined range.	
 	\figuremacro{h}{sincos}{$\sin$ and $\cos$ functions}{ }{0.9}
 	\subsection{Hierarchical Transformations}
 	Hierarchical transformations is a cheap way of inheriting all the scale, rotation and translation of one mesh by another, all with just one multiplication. In this project the egg protectors are an example of a hierarchical transformations. In order to achieve the final effect the model matrix of the current torus is calculated from the model matrices of the bigger toruses. \textbf{Figure {\ref{fig:hierarchicalTransformations}}} shows the result of this graphics effect in the project.
@@ -150,17 +147,49 @@
 	\subsection{Skybox}
 	The skybox is a great graphics effect that brings completeness and background to the 3D scene. The effect is achieved with a cube that has a texture applied to its inner sides and the internal parts of the cube are rendered rather than the external parts by disabling the cull face. Cube map similar to the one on \textbf{Figure {\ref{fig:skybox}}} can be used for the inner parts of the cube.
 	\figuremacro{h}{skybox}{Cube map used in the project}{ }{0.9}	
+	
+	The cube map is also used for the reflection part of the water. There we sample the cube map based on the view direction and the surface normal. More on this can be found in the water section. 
 	\subsection{Terrain}
 	The terrain is a geometry object that makes the scene even more realistic. It is generated using a height map. \textbf{Figure {\ref{fig:heightmap}}} shows an example of a height map. A height map is a texture that contains height data where the pixel colour represents the y-component of the vertex position. The height map from \textbf{Figure{\ref{fig:heightmap}}} is used in this project. The dark and white pixels represent the low and high parts of the scene, respectively. 
-	\figuremacro{h}{heightmap}{Height map}{ }{1.0}
-	A crucial part of the terrain is multi-texturing and generating texture weights. These two features make the terrain more realistic and natural. The texture weights are generated based on the height of the terrain and later used if the shaders to blend between the textures. \textbf{Figure {\ref{fig:multiTexturing}}} shows an example of multi-texturing terrain from the project.
-	\figuremacro{h}{multiTexturing}{Multi-texturing terrain. Sand-Grass-Rocks}{ }{1.0}
+	\figuremacro{h}{heightmap}{Height map}{ }{0.8}
+	
+	A crucial part of the terrain is multi-texturing and generating texture weights. These two features make the terrain more natural. The texture weights are generated based on the height of the terrain and later used in the shaders to blend between the textures. \textbf{Figure {\ref{fig:multiTexturing}}} shows an example of multi-texturing terrain from the project.
+	\figuremacro{h}{multiTexturing}{Multi-texturing terrain. Sand-Grass-Rocks}{ }{0.8}
 	\subsection{Water}
+	The terrain representing an island is surrounded by water. A wide variety of effects are used on the water to make it more realistic:
 	\subsubsection{Reflection}
+	The reflective part of the water is implemented by sampling a cubemap texture that is used as an environment map. The main difference between a normal 2D texture and a cubemap texture is the way it is sampled. The latter is sampled with 3D directional vector that points in the direction of the cubemap texture that is to be sampled. \textbf{Figure {\ref{fig:cubemapReflection}}} shows an example of cubemap reflection.
+	\figuremacro{h}{cubemapReflection}{Reflection with cube map}{ }{1.0}
+
+	In the project, the reflective object is a plane, hence all normals are pointing in the same direction - upwards and the used environment map is the skybox. \textbf{Figure {\ref{fig:reflectedSun}}} shows the reflection of the sun and the clouds on the water.
+	\figuremacro{h}{reflectedSun}{Reflection of the sun and the clouds}{ }{0.9}
 	\subsubsection{Refraction}
+	The refraction effect is achieved by rendering the scene to a frame buffer and using the texture later when defining the colour of the water. However, rendering the whole scene twice would be extremely inefficient. For this reason, clipping plane is used and only the refracted parts of the scene are rendered the second time. Clipping planes allows us to specify a 3D plane in the world and all the geometry objects that have negative distance (they are outside this plane) are not rendered. The way to specify if something is inside the clipping plane is by using the dot product of the vertex and the plane.  See \textbf{Figure {\ref{fig:clippingPlane}}} for references. 
+	\figuremacro{h}{clippingPlane}{Distance to clipping plane}{ }{1.0}
+	
+	In this case, the level of the clipping plane is the level of the water. \textbf{Figure {\ref{fig:refraction}}} shows the refracted terrain under the water.
+	\figuremacro{h}{refraction}{Refraction - terrain under the water}{ }{0.9}
 	\subsubsection{Distortion effect}
+	The Distortion effect is achieved with a DuDv map (\textbf{Figure {\ref{fig:DuDvMap}}}) which makes the water looks like it is rippling. The DuDv map is just a 2D texture with red and green lobes on it which can be represented as a 2D vector.
+	\figuremacro{h}{DuDvMap}{DuDv map}{ }{0.7}
+	
+	The way it is working is by sampling the DuDv map and then distorting the reflection and refraction textures by adding the sampled offsets to their texture coordinates. To increase the level of detail a matching to the DuDv map, normal map texture is used. It is sampled with the distorted texture coordinates and it makes the water more shiny. The result is shown on \textbf{Figure {\ref{fig:distortion}}}. It makes the water more natural by adding this level of detail.
+	\figuremacro{h}{distortion}{Distorted refraction texture}{ }{1.0}
+	
 	\subsubsection{The Fresnel effect}
+	After the reflection and refraction textures are captured and distorted, they are blended based on the Fresnel effect. This determines how much of each texture must be seen based on the viewing angle. When we look straight down into the water it appears to be fairly transparent and when we look across the water surface at a low angle it looks more reflective. The viewing angle is determined from the dot product of the surface normal and the view direction of the camera. The more these two vectors point in the same direction, the more transparent the water is. See \textbf{Figure {\ref{fig:fresnelDrawing}}} for reference.
+	\figuremacro{h}{fresnelDrawing}{Viewing angle used for the Fresnel effect}{ }{1.0}
+	
+	\textbf{Figure {\ref{fig:fresnelEffect}}} shows an example of the Fresnel effect in the scene. The area of water that is closer to the camera, seems to be more transparent. The area of water that is further away from the camera is much more reflective due to the large angle.
+	\figuremacro{h}{fresnelEffect}{Fresnel effect}{ }{0.9}
 	\subsubsection{The depth effect}
+	The depth effect makes the water seem more transparent around the shallow areas and more murky around the deeper areas. For this effect, the depth buffer of the refraction part of the scene and the build-in OpenGL variable - \textit{gl\_FragCoord} are used. The depth buffer returns the distance of the nearest object under the water to the camera. And the \textit{gl\_FragCoord} returns the window coordinate of the current fragment. Then we subtract one distance from the other and the result is the depth of the water from the perspective of the camera (the amount of water between the camera and the refracted object). See \textbf{Figure {\ref{fig:refractionDistance}}} for reference.
+	\figuremacro{h}{refractionDistance}{Water depth}{ }{1.0}
+	
+	The tricky part is to get linear depth (the true z value) from the depth buffer by using the near- and far-clip planes. The results of these calculation are shows on \textbf{Figure {\ref{fig:depthBuffer}}}.
+	\figuremacro{h}{depthBuffer}{Water depth}{ }{1.0}
+	
+	The whiter a pixel is, the further away from the camera it is. The shallow areas of the water are shown in black. In order to achieve the final result, alpha blending is used. \textbf{Figure {\ref{fig:refraction}}} shows an example of this effect from the scene.
 	\subsection{Post-processing effects}
 	Post-processing is a technique where a frame is captured in a texture, different effects are applied to the colours of the pixels and it is rendered back to the screen.
 	\subsubsection{Mask}

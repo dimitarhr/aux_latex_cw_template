@@ -74,7 +74,7 @@
 	
 	\maketitle
 	\begin{abstract}
-		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from material shading and post-processing effects to reflective and refractive rippling water. This report covers how the scene was implemented and what future work is considered.
+		 The aim of this project is to create a realistic 3D scene, rendered in real-time. The project is inspired by the series \textit{Games of Thrones}\cite{dragons} (see \textbf{Figure {\ref{fig:inspiration}}}) and previous years projects found on the games website\cite{gamesWebsite} of Napier University. A wide variety of graphics techniques were used to create the 3D scene, from material shading and post-processing effects to reflective and refractive rippling water. This report covers how the scene was implemented and what future work is considered. Video demonstrating the 3D scene can be found \underline{here}\cite{video}.
 	\end{abstract}
 	\\\\
 	\textbf{Keywords -- }{\mykeywords}
@@ -190,7 +190,7 @@
 	\figuremacro{h}{depthBuffer}{Water depth}{ }{1.0}
 	
 	The whiter a pixel is, the further away from the camera it is. The shallow areas of the water are shown in black. In order to achieve the final result, alpha blending is used. \textbf{Figure {\ref{fig:refraction}}} shows an example of this effect from the scene.
-	\subsection{Post-processing effects}
+	\subsection{Other post-processing effects}
 	Post-processing is a technique where a frame is captured in a texture, different effects are applied to the colours of the pixels and it is rendered back to the screen.
 	\subsubsection{Mask}
 	This is a multi-texturing technique that is achieved with a black and white mask. In the fragment shader both the mask and the texture from the frame buffer are sampled and these colours are multiplied together to get the final colour. In this way only the white parts of the mask are visible in the final image. \textbf{Figure {\ref{fig:maskEffect}}} shows an example from the project. The effect of zooming in is achieved by changing the FoV angle in the projection of the camera.
@@ -214,6 +214,17 @@
 	The scene in this project consists of quite a lot of geometry objects and additional effects. Doing optimization is crucial in this case in order to improve the performance of the GPU.
 	\subsection{Instancing}
 	One of the used optimization technique is Instancing. Instancing  allows us to draw many geometry objects at once with a single render call, saving us all the CPU -> GPU communications each time we need to render the object. With instancing this is done only once and it avoids the performance bottleneck on the relatively slow CPU to GPU bus. All the required data is sent to the GPU only once and then the CPU renders all the instances without having to continually communicate with the CPU. This method of drawing is really efficient for rendering a large number of geometry objects with the same set of vertex data but with different world transformations. For example, grass or rocks on the seabed. In this project, instancing is used to render 800 dragon eggs around the island under the water.
+	\subsection{Other optimizations}
+	One of the used techniques is reducing the OpenGL Calls. In order to avoid unnecessary work, not changing textures and uniforms are set only once. Also similar geometry objects are stored in the same maps as a data type. This allows us to bind the correct effects and shaders only once per list of objects.
+	
+	The other used techniques is related to reducing the Maths operations. Instead of multiplying the \textit{M}, \textit{V}, \textit{P} matrix together for each object that is rendered, the \textit{P*V} part is pre-calculated per list of geometry objects. In this way, for every object only one multiplication is done instead of two. The reason why this is working is because the camera view and projection are not changed until everything is rendered and the camera update method is called.
+	
+	The Visual Studio Profiler was used to analyse the code and to find the bottlenecks. \textbf{Figure {\ref{fig:beforeOptimization}}} and \textbf{Figure {\ref{fig:afterOptimization}}} show the results of the performance \textit{before} and \textit{after} the optimization.
+	
+	\figuremacro{h}{beforeOptimization}{Before optimization}{ }{1.0}
+	\figuremacro{h}{afterOptimization}{After optimization}{ }{1.0}
+	
+	There is an improvement in the \textit{Inclusive percentage} for the \textit{Hot Path} methods in the code.
 	\section{Future Work}
 	The initial plan for the water was to be fully reflective (reflecting the terrain and the rest of the entities from the scene), however, because of the lack of time it was not possible to be implemented. This is something which is definitely considered  for future development. In addition to this, the scene will be made more dynamic, with moving clouds and changing day/night times. 
 	\section{Conclusion}
